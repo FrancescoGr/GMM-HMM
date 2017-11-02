@@ -32,7 +32,7 @@ load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Pb');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Pp');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Prior');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Prob');
-% load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\States');
+load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\States');
 
 
 %% Emission Probability
@@ -40,12 +40,14 @@ load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Pb');
 % Normalization in order to have the Emission_Prob, as in [6]
 Sum_tot1=zeros(1,3);
 for f=1:length(Gesture)
-    P=Pb{1,f}.*GMMs{f,1}.ComponentProportion;
-    tot=sum(P);
-    P=P./tot;
-    Emission_P_sequence{1,f}=P;
-    Sum_tot{1,f}(:,:)=tot;
-    Sum_tot1=Sum_tot1+tot;
+    if f ~=7
+        P=Pb{1,f}.*GMMs{f,1}.ComponentProportion;
+        tot=sum(P);
+        P=P./tot;
+        Emission_P_sequence{1,f}=P;
+        Sum_tot{1,f}(:,:)=tot;
+        Sum_tot1=Sum_tot1+tot;
+    end
 end
 Sum_tot1=Sum_tot1./length(Gesture);
 
@@ -60,19 +62,23 @@ save Sum_tot1 Sum_tot1
 
 
 for f=1:length(Gesture)
-    Pp = posterior(GMMs{f,1},Gesture{1,f});
-    [~,ind]=max(Pp');
-    State{1,f}=ind';
+    if f ~=7
+        Pp = posterior(GMMs{f,1},Gesture{1,f}(:,3:end));
+        [~,ind]=max(Pp');
+        State{1,f}=ind';
+    end
 end
 
 
 % total Sequence
 Total_sequence=[];
 for f=1:length(Gesture)
-    lines = States{1,f};
-    Points =[Gesture{1,f},f*ones(size(Gesture{1,f},1),1),Emission_P_sequence{1,f},State{1,f}];
-    if size(Points,1)> 200  % elimina gesture 10, pochi samples
-        Total_sequence(lines,:)=Points;   
+    if f ~=7
+        lines = States{1,f};
+        Points =[Gesture{1,f},f*ones(size(Gesture{1,f},1),1),Emission_P_sequence{1,f},State{1,f}];
+        if size(Points,1)> 200  % elimina gesture 10, pochi samples
+            Total_sequence(lines,:)=Points;   
+        end
     end
 end
 

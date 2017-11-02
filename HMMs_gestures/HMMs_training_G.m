@@ -23,7 +23,7 @@ load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Pb');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Pp');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Prior');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Prob');
-% load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\States');
+load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\States');
 
 % % 1) Loading
 % Data_withGestures = Loader_Gestures();
@@ -41,28 +41,34 @@ load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Pb');
 
 % Normalization in order to have the Emission_Prob, as in [6]
 for f=1:length(Gesture)
-    P=Pb{1,f}.*GMMs{f,1}.ComponentProportion;
-%     tot=sum(P);
-%     P=P./tot;
-    Emission_P_sequence{1,f}=P;
+    if f ~=7
+        P=Pb{1,f}.*GMMs{f,1}.ComponentProportion;
+    %     tot=sum(P);
+    %     P=P./tot;
+        Emission_P_sequence{1,f}=P;
+    end
 %     Sum_tot{1,f}(:,:)=tot;
 end
 
 %% Sequence reconstruction
 
 for f=1:length(Gesture)
-    Pp = posterior(GMMs{f,1},Gesture{1,f});
-    [~,ind]=max(Pp');
-    State{1,f}=ind';
+    if f ~=7
+        Pp = posterior(GMMs{f,1},Gesture{1,f}(:,3:end));
+        [~,ind]=max(Pp');
+        State{1,f}=ind';
+    end
 end
 
 % total Sequence of the states and of the gestures
 Total_sequence=[];
 for f=1:length(Gesture)
-    lines = States{1,f};
-    Points =[Gesture{1,f},f*ones(size(Gesture{1,f},1),1),Emission_P_sequence{1,f},State{1,f}];
-    if size(Points,1)> 200  % elimina gesture 10, pochi samples
-        Total_sequence(lines,:)=Points;   
+    if f ~=7
+        lines = States{1,f};
+        Points =[Gesture{1,f},f*ones(size(Gesture{1,f},1),1),Emission_P_sequence{1,f},State{1,f}];
+        if size(Points,1)> 200  % elimina gesture 10, pochi samples
+            Total_sequence(lines,:)=Points;   
+        end
     end
 end
 
@@ -91,12 +97,14 @@ LT=length(Total_sequence);
 %% Save
 
 for f=1:length(Gesture)
-    HMMs(1,f).Beginning_P=Beginning_P{1,f};
-    HMMs(1,f).Trans_P=Trans_P{1,f};
-    HMMs(1,f).Emission_P=Emission_P_sequence{1,f};
-    HMMs(1,f).Prior=GMMs{f,1}.ComponentProportion;
-    HMMs(1,f).Covariances=GMMs{f,1}.Sigma;
-    HMMs(1,f).Mean=GMMs{f,1}.mu;
+    if f ~=7
+        HMMs(1,f).Beginning_P=Beginning_P{1,f};
+        HMMs(1,f).Trans_P=Trans_P{1,f};
+        HMMs(1,f).Emission_P=Emission_P_sequence{1,f};
+        HMMs(1,f).Prior=GMMs{f,1}.ComponentProportion;
+        HMMs(1,f).Covariances=GMMs{f,1}.Sigma;
+        HMMs(1,f).Mean=GMMs{f,1}.mu;
+    end
 end
 
 
