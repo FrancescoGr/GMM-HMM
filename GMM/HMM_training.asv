@@ -1,0 +1,119 @@
+%% HMM_parser, TRAINING PHASE to train dataset and MERGE with gestures
+% REFERENCES
+% [1] Simple Methods for Initializing the EM Algorithm for Gaussian Mixture Models
+% [2] The Multivariate Gaussian Distribution (?)
+% [3] Bayesian information criterion + Akaike (?)
+% [4] OBJECTIVE EVALUATION OF LAPAROSCOPIC SURGICAL SKILLS USING HIDDEN MARKOV 
+%     MODELS BASED ON HAPTIC INFORMATION AND TOOL/TISSUE INTERACTIONS
+% [5] Objective Skill Evaluation for Laparoscopic Training Based on Motion Analysis
+% [6] A Dataset and Benchmarks for Segmentation and Recognition of Gestures in Robotic Surgery
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%             preThesis: Francesco Grigoli AA 2016/2017                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+clear 
+close all
+clc
+
+% 1) Loading
+Data_withGestures = Loader_Gestures();
+K=max(Data_withGestures(:,end));
+
+% 2) Features scaling and mean normalization [5] Grouping [6]
+Data_withGestures = Scaling_Grouping(Data_withGestures);
+LT=length(Data_withGestures);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % 3) Feature Reduction
+% %    - 1st method: PCA
+% Training_set = Data_withGestures(:,2:end-1);
+% Cross=(1/(size(Training_set,1)))*Training_set'*Training_set;
+%  [U,S,V]=svd(Cross);
+%  
+%  f=1;
+%  totS=sum(diag(S));
+%  sumS=0;
+%  
+%  % Total Variance in the remaining Features
+%  while (((1-sumS/totS) > 0.1) && (f ~= size(S,2)+1))  
+%      sumS=0;
+%      f=f+1;     
+%      for h=1:f
+%          sumS=sumS+S(h,h);
+%      end
+%  end
+%  
+%  if f==0
+%      fprinf('error');
+%  end
+%  
+% U_red=U(:,1:f);
+% 
+% % features final
+% for i=1:size(Training_set,1)  
+%     features_fin(i,:)=U_red'*Training_set(i,:)';   
+% end
+% 
+% % Original reducted Data_set
+% Data_withGestures=[Data_withGestures(:,1),features_fin,Data_withGestures(:,end)];
+
+%    - 2st method: LDA as in [6]
+% [~, WLDA, ~, ~]=mylda(Data_withGestures(:,2:end-1),Data_withGestures(:,end),38);
+% Data_withGestures_reducted = Data_withGestures(:,2:end-1)*WLDA;
+% Data_withGestures = [Data_withGestures(:,1),Data_withGestures_reducted,Data_withGestures(:,end)];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 4) Grouping of the data, according to the gestures
+Gesture = Grouping(Data_withGestures,K);
+
+% 5) Definition of States that characterize each Gesture 
+%    -> each GMM represent a state in the HMM that characterizes the Gesture
+ for i=1: length(Gesture)
+     gesture=Gesture{1,i};
+     if length(gesture)>200
+            % built-in function
+              [GMMs]= GMM_modeling_built(gesture(:,2:end));
+              Prior{1,i} = GMMs.ComponentProportion;
+              Covariances{1,i}=GMMs.Sigma;
+              Mean{1,i}=GMMs.mu;
+              Prob{1,i}=pdf(GMMs,gesture(:,2:end));
+              [Pb{1,i},Pp{1,i}] = Belonging_Prob(Prior{1,i},Covariances{1,i},Mean{1,i},gesture(:,2:end));
+%               Gesture{1,i}=[Gesture{1,i},Prob{1,i}.*Prior{1,i}'];
+
+              
+             % our Function
+%          [GMMs(1,i),K(1,i),Prob] = GMM_modeling(gesture(:,2:end));
+%          Gesture{1,i}=[Gesture{1,i},Prob.*(GMMs(1,i).Prior)'];
+     end
+ end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  % CHECK Prior analysis
+%  for i=1:length(Prior)
+%      if length(Prior{1,i})==0;
+%      else
+%         P(i,:)=sort(Prior{1,i});
+%      end
+%  end
+%  n=1;
+%  for i=1:length(P)
+%     if P(i,1)== 0
+%         P(n,:)=[]; 
+%         n=n+1;
+%     end
+%  end
+%  S=std(P);
+%  M=mean(P);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+% save Gesture Gesture
+% save GMMs GMMs
+% save K K
+% save Prob Prob
+
+save Gesture Gesture
+save Prior Prior
+save Covariances Covariances
+save Mean Mean 
+save Prob Prob
+save Pb Pb
