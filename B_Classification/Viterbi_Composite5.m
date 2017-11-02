@@ -39,14 +39,16 @@ else
      
     v=(Prob_old+log(HMM.Trans_P(V_old,:).*SUM')');
     [Prob_new,V_new]=max(v);
+    
+    %% check the G11 error
     if V_new==11
         l=0;
     end
     v(V_new,:)=0;
-    %check the 11 error
-    if V_new==11 && Prob_new*0.9995 < max(v)
+  
+    if V_new==11 && Prob_new*0.9995 <= max(v)
         [Prob_new,V_new]=max(v);
     end
-
+    
 end
 end
