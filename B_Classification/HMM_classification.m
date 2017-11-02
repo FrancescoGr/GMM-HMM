@@ -46,19 +46,23 @@ K=3; %num of gaussians in each gesture
 % Sample_all=New_samples(Sample_num,:);
 % Sample_test=Sample_all(1,3:end-1);
 Unknown_sequence = New_samples(:,3:end-1);
+% Unknown_sequence(358:380,:)=[]; 
+LT=size(Unknown_sequence,1);
 MultiFactor = HMM.Beginning_P;
 V=0;
 Prob=0;
 for i=1:LT
     Data=Unknown_sequence(i,:);
 %     [V,Prob,MultiFactor]=Viterbi_Composite(HMM,HMMs,Data,MultiFactor,i,Gesture,K,V,Prob);
-    [V,Prob]=Viterbi_Composite2(HMM,HMMs,Data,i,Gesture,K,V,Prob); % no MultiFactor  
-%     [V,Prob,MultiFactor]=Viterbi_Composite3(HMM,HMMs,Data,MultiFactor,i,Gesture,K,V,Prob,Sum_tot1);  % log % normalizzando Pb 
+%     [V,Prob]=Viterbi_Composite2(HMM,HMMs,Data,i,Gesture,K,V,Prob); % no MultiFactor  
+%     [V,Prob,MultiFactor]=Viterbi_Composite3(HMM,HMMs,Data,MultiFactor,i,Gesture,K,V,Prob);  % log % normalizzando Pb 
 %     [V,Prob,MultiFactor]=Viterbi_Composite4(HMM,HMMs,Data,MultiFactor,i,Gesture,K,V,Prob,Sum_tot1); % normalizzando Pb
     [V,Prob]=Viterbi_Composite5(HMM,HMMs,Data,i,Gesture,K,V,Prob); % no MultiFactor  %log
     
-DECODED_SEQUENCE(i,1)=V;
-    
+    DECODED_SEQUENCE(i,1)=V;
+     if i== 841
+         l=0;
+     end
 %     figure(1)
 %     plot(P)
     if Prob == inf || Prob == 0      
