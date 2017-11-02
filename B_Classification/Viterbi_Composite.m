@@ -1,15 +1,13 @@
-function    [V_new,Prob_new,MultiFactor_new,Pb]=Viterbi_Composite(HMM,HMMs,Data,MultiFactor_old,i,Gesture,K,V_old,Prob_old)
+function    [V_new,Prob_new,MultiFactor_new]=Viterbi_Composite(HMM,HMMs,Data,MultiFactor_old,i,Gesture,K,V_old,Prob_old)
 if i==1    
     for j=1:Gesture
         if j ~= 7
             clear Pb;
+            Training_set = Data;
+            Covariances = HMMs(1,j).Covariances;
+            Means = HMMs(1,j).Mean;
             for k=1:K
-                Training_set = Data;
-                Covariances = HMMs(1,j).Covariances;
-                Means = HMMs(1,j).Mean;
-                n = size(Means,2);
                 Pb(:,k)= mvnpdf(Training_set,Means(k,:),Covariances(:,:,k));     
-%                 Pb(1,k) = (1/((sqrt((2*pi)^(n)*det(Covariances(:,:,k))))))*exp(-0.5*(Training_set-Means(k,:))*pinv(Covariances(:,:,k))*(Training_set-Means(k,:))');
             end          
             v(j,1)=HMM.Beginning_P(1,j)*sum(HMMs(1,j).Beginning_P'.*HMMs(1,j).Prior.*Pb);
             MultiFactor(j,:)=HMMs(1,j).Beginning_P'.*HMMs(1,j).Prior.*Pb;
@@ -24,13 +22,11 @@ else
      for j=1:Gesture
         if j ~= 7 
             clear Pb;
+            Training_set = Data;
+            Covariances = HMMs(1,j).Covariances;
+            Means = HMMs(1,j).Mean;
             for k=1:K
-                Training_set = Data;
-                Covariances = HMMs(1,j).Covariances;
-                Means = HMMs(1,j).Mean;
-                n = size(Means,2);
                 Pb(:,k)= mvnpdf(Training_set,Means(k,:),Covariances(:,:,k));     
-%                 Pb(1,k) = (1/((sqrt((2*pi)^(n)*det(Covariances(:,:,k))))))*exp(-0.5*(Training_set-Means(k,:))*pinv(Covariances(:,:,k))*(Training_set-Means(k,:))');
             end
             if j == V_old
                 tras = (HMMs(1,j).Trans_P.*HMMs(1,j).Prior.*Pb);

@@ -51,11 +51,13 @@ V=0;
 Prob=0;
 for i=1:LT
     Data=Unknown_sequence(i,:);
-    [V,Prob,MultiFactor,P(i,:)]=Viterbi_Composite(HMM,HMMs,Data,MultiFactor,i,Gesture,K,V,Prob);
-%     [V,Prob,MultiFactor]=Viterbi_Composite2(HMM,HMMs,Data,MultiFactor,i,Gesture,K,V,Prob); % no MultiFactor  
+%     [V,Prob,MultiFactor]=Viterbi_Composite(HMM,HMMs,Data,MultiFactor,i,Gesture,K,V,Prob);
+    [V,Prob]=Viterbi_Composite2(HMM,HMMs,Data,i,Gesture,K,V,Prob); % no MultiFactor  
 %     [V,Prob,MultiFactor]=Viterbi_Composite3(HMM,HMMs,Data,MultiFactor,i,Gesture,K,V,Prob,Sum_tot1);  % log % normalizzando Pb 
 %     [V,Prob,MultiFactor]=Viterbi_Composite4(HMM,HMMs,Data,MultiFactor,i,Gesture,K,V,Prob,Sum_tot1); % normalizzando Pb
-    DECODED_SEQUENCE(i,1)=V;
+    [V,Prob]=Viterbi_Composite5(HMM,HMMs,Data,i,Gesture,K,V,Prob); % no MultiFactor  %log
+    
+DECODED_SEQUENCE(i,1)=V;
     
 %     figure(1)
 %     plot(P)
