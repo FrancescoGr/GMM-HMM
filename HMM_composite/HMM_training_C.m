@@ -77,35 +77,41 @@ for f=1:length(Gesture)
         lines = States{1,f};
         Points =[Gesture{1,f},f*ones(size(Gesture{1,f},1),1),Emission_P_sequence{1,f},State{1,f}];
         if size(Points,1)> 200  % elimina gesture 10, pochi samples
-            Total_sequence(lines,:)=Points;   
+            Total_sequences(lines,:)=Points;   
         end
     end
 end
 
 % Deleting of the empty samples (gesture 10)
-[ind]=find(Total_sequence(:,1)==0);
-Total_sequence(ind,:)=[];
+[ind]=find(Total_sequences(:,1)==0);
+Total_sequences(ind,:)=[];
 
 % 2) Features scaling and mean normalization [5] Grouping [6]
-Total_sequence = Scaling_Grouping(Total_sequence);
-LT=length(Total_sequence);
+test=[1,2,4,5];
+for c = 1:length(test)
+    comp=test(c);
 
-%% Subdivide each user and each trial
-[Data_inusers_rep,LD,K,U,R,Gestures]=Subdividing(Total_sequence);
+    Total_sequence = Scaling_Grouping(Total_sequences,comp);
+    LT=length(Total_sequence);
 
-%% Beginning Probabilty
+    %% Subdivide each user and each trial
+    [Data_inusers_rep,LD,K,U,R,Gestures]=Subdividing(Total_sequence);
 
-[Beginning_P] = Startprob(Data_inusers_rep,LD,K,U,R,Gestures);
+    %% Beginning Probabilty
 
- %% Transition Probabilty
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[Trans_P] = Transprob(Data_inusers_rep,LD,K,U,R,Gestures);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    [Beginning_P] = Startprob(Data_inusers_rep,LD,K,U,R,Gestures);
 
-%% Save
+     %% Transition Probabilty
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    [Trans_P] = Transprob(Data_inusers_rep,LD,K,U,R,Gestures);
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-HMM.Beginning_P=Beginning_P;
-HMM.Trans_P=Trans_P;
+    %% Save
 
+    HMM_tot{comp,1}.Beginning_P=Beginning_P;
+    HMM_tot{comp,1}.Trans_P=Trans_P;
+    clear Total_sequence;
+end
 
-save HMM HMM
+save test test
+save HMM_tot HMM_tot
