@@ -1,16 +1,16 @@
 
-function Features = Loader_Gestures()
+function [Features,user] = Loader_Gestures()
 
 %% Gestures
      
-     user = ['D','C','B','E','G','H','I']; 
-     sessions= [15;15;13;14;10;10;13];
+     user = ['D','C','B','E','G','H','I','F']; 
+     sessions= [15;15;13;14;10;10;13;13];
 
     for j=1:length(user)
         u = ['u',int2str(j)];
         for i_session =1: sessions(j)
             s = ['s',int2str(i_session)];
-            filename = ['G:\Politecnico\V annob\Thesis\HMM\CODICE\DATA\JHU-ISI\Training_Set\transcriptions/',user(j),num2str(00),num2str(i_session),'.txt'];
+            filename = ['G:\Politecnico\V annob\Thesis\HMM\CODICE\DATA_LOUO\JHU-ISI\Training_Set\transcriptions/',user(j),num2str(00),num2str(i_session),'.txt'];
             raw_data.(u).(s) = ExtractData_gestures(filename);
         end
     end
@@ -21,19 +21,20 @@ function Features = Loader_Gestures()
         u = ['u',int2str(j)];
             for i_session =1: sessions(j)
                 s = ['s',int2str(i_session)];
-                filename = ['G:\Politecnico\V annob\Thesis\HMM\CODICE\DATA\JHU-ISI\Training_Set/',user(j),num2str(00),num2str(i_session),'.txt'];
+                filename = ['G:\Politecnico\V annob\Thesis\HMM\CODICE\DATA_LOUO\JHU-ISI\Training_Set/',user(j),num2str(00),num2str(i_session),'.txt'];
                 data.(u).(s) = ExtractData(filename);
             end
         end
 
     % Features extraction (useful attributes)
-    Features=[];
 
         for j=1:length(user)
             u = ['u',int2str(j)];
+
             for i_session  =1: sessions(j)
 
                 s = ['s',int2str(i_session)];
+                Features.(u).(s)=[];
                 Session=[];
                 Session=[Session,j*(ones(length(data.(u).(s).PSM1.pos),1))];
                 Session=[Session,i_session*(ones(length(data.(u).(s).PSM1.pos),1))];   
@@ -62,7 +63,7 @@ function Features = Loader_Gestures()
                     Session(ind,:)=[];
                 end
                 
-                Features = [Features;Session];
+                Features.(u).(s) = [Features.(u).(s);Session];
 
             end 
     
