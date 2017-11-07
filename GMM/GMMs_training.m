@@ -25,7 +25,7 @@ DATA_SETs = Dataset(User_out,Data_inusers,users);
 save DATA_SETs DATA_SETs
 
 % 3) number of features 
-dim=38
+dim = 38;
 
 for d=1:length(DATA_SETs)
     Data_withGestures = DATA_SETs{d,1}.Training;
@@ -98,8 +98,8 @@ for d=1:length(DATA_SETs)
     %               [Pb{1,i},Pp{1,i}] = Belonging_Prob( Prior{1,i},Covariances{1,i},Mean{1,i},gesture(:,3:end));
                   
                   [GMMs{d,1}{i,1}]= GMM_modeling_built_new(gesture(:,3:end));
-                  for j=1:size(GMMs{i,1}.mu,1)
-                     Pb{d,1}{1,i}(:,j)= mvnpdf(gesture(:,3:end),GMMs{i,1}.mu(j,:),GMMs{i,1}.Sigma(:,:,j));
+                  for j=1:size(GMMs{d,1}{i,1}.mu,1)
+                     Pb{d,1}{1,i}(:,j)= mvnpdf(gesture(:,3:end),GMMs{d,1}{i,1}.mu(j,:),GMMs{d,1}{i,1}.Sigma(:,:,j));
                   end
 
                  % our Function
