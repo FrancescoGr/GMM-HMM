@@ -16,13 +16,15 @@ clear
 close all
 clc
 
-% 1) Loading
-[Data_inusers,users] = Loader_Gestures();
+% % 1) Loading
+% [Data_inusers,users] = Loader_Gestures();
+% 
+% % 2) Test set and Training Set definition
+% User_out = [1,2,3]; %['D','C','B']; 
+% DATA_SETs = Dataset(User_out,Data_inusers,users);
+% save DATA_SETs DATA_SETs
+load('DATA_SETs.mat')
 
-% 2) Test set and Training Set definition
-User_out = [1,2,3]; %['D','C','B']; 
-DATA_SETs = Dataset(User_out,Data_inusers,users);
-save DATA_SETs DATA_SETs
 
 % 3) number of features 
 dim = 38;

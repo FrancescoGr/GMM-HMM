@@ -4,7 +4,7 @@ function [obj]= GMM_modeling_built_new(Training_set)
 
 % 1) Number of Gaussians in the model
 K = 3;
-it = 1500;
+it = 1700;
 Reg = 0;
 
         SharedCovariance = {false};
