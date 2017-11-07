@@ -63,10 +63,10 @@ LT=length(Data_withGestures);
 % Data_withGestures=[Data_withGestures(:,1),features_fin,Data_withGestures(:,end)];
 % 
 %    - 2st method: LDA as in [6]
-% [~, WLDA, ~, ~]=mylda(Data_withGestures(:,3:end-1),Data_withGestures(:,end),9);
-% Data_withGestures_reducted = Data_withGestures(:,3:end-1)*WLDA;
-% Data_withGestures = [Data_withGestures(:,1:2),Data_withGestures_reducted,Data_withGestures(:,end)];
-% save WLDA WLDA
+[~, WLDA, ~, ~]=mylda(Data_withGestures(:,3:end-1),Data_withGestures(:,end),9);
+Data_withGestures_reducted = Data_withGestures(:,3:end-1)*WLDA;
+Data_withGestures = [Data_withGestures(:,1:2),Data_withGestures_reducted,Data_withGestures(:,end)];
+save WLDA WLDA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 4) Grouping of the data, according to the gestures
@@ -74,7 +74,7 @@ LT=length(Data_withGestures);
 
 % 5) Definition of States that characterize each Gesture 
 %    -> each GMM represent a state in the HMM that characterizes the Gesture
- for i=8 %1: length(Gesture)
+ for i=1: length(Gesture)
      gesture=Gesture{1,i};
      if length(gesture)>200
          
@@ -95,7 +95,12 @@ LT=length(Data_withGestures);
 %          [GMMs(1,i),K(1,i),Prob] = GMM_modeling(gesture(:,2:end));
 %          Gesture{1,i}=[Gesture{1,i},Prob.*(GMMs(1,i).Prior)'];
      end
-     end
+ end
+
+ save Pb Pb
+ save GMMs GMMs
+ save Gesture Gesture
+ save States States
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  % CHECK Prior analysis
