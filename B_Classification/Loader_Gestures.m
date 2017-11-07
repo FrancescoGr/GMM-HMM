@@ -5,7 +5,7 @@ task=3;
 user='F';
 
 % tmp = 'feataures under consideration = ';
-F =38; %input(tmp);
+F =9; %input(tmp);
 
 %% Gestures
 %      sessions= [2];

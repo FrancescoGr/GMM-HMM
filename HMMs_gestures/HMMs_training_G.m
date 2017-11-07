@@ -17,13 +17,13 @@ close all
 clc
 
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\GMMs');
-load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Gesture');
+load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Gesture');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Mean');
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Pb');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Pp');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Prior');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Prob');
-load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\States');
+load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\States');
 
 % % 1) Loading
 % Data_withGestures = Loader_Gestures();

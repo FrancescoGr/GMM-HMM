@@ -52,13 +52,15 @@ for c = 1:length(test)
                         i_session= sessions(p);
                         s = ['s',int2str(i_session)];
                         if F ~=38
-                            load('C:\Users\Francesco-Greg\Documents\MATLAB\HMM\2_JHUISIDATASET\SUPERVISED_CLASS\A_Training\GMM+HMM\GMM\9Features_Builtin\WLDA');
+                            load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\WLDA');
                             DATA_reducted.(u).(t).(s) = DATA.(u).(t).(s)(:,3:end-1)*WLDA;
-                            DATA.(u).(t).(s) = [DATA.(u).(t).(s)(:,1:2),DATA.(u).(t).(s),DATA.(u).(t).(s)(:,end)];
+                            DATA_fin.(u).(t).(s) = [DATA.(u).(t).(s)(:,1:2),DATA_reducted.(u).(t).(s),DATA.(u).(t).(s)(:,end)];
+                        else
+                            DATA_fin.(u).(t).(s) = DATA.(u).(t).(s); 
                         end
 
                         % 3) Features scaling and mean normalization [5] Grouping [6]
-                        [New_samples{SET,1}.(u).(t).(s)] = Scaling_Grouping(DATA.(u).(t).(s),SET);
+                        [New_samples{SET,1}.(u).(t).(s)] = Scaling_Grouping(DATA_fin.(u).(t).(s),SET);
                         LT{SET,1}.(u).(t).(s)=size(New_samples{SET,1}.(u).(t).(s),1);
                         Gesture=size(HMMs,2);
                         K=3; %num of gaussians in each gesture
@@ -68,7 +70,13 @@ for c = 1:length(test)
                         MultiFactor = HMM.Beginning_P;
                         V=0;
                         Prob=0;
+                        if i_session == 3
+                            l=0;
+                        end
                         for i=1:LT{SET,1}.(u).(t).(s)
+                            if i == 841
+                                l=0;
+                            end
                             Data=Unknown_sequence(i,:);
                         %     [V,Prob,MultiFactor]=Viterbi_Composite(HMM,HMMs,Data,MultiFactor,i,Gesture,K,V,Prob);
                         %     [V,Prob]=Viterbi_Composite2(HMM,HMMs,Data,i,Gesture,K,V,Prob); % no MultiFactor  
@@ -89,7 +97,7 @@ for c = 1:length(test)
                 end
             end
             Accuracy_mean=[ Accuracy_mean; mean(Accuracy)];
-            Accuracy_mean_red=[Accuracy_mean_red;mean(Accuracy(1,[1,2,4,6:13]))];
+            Accuracy_mean_red=[Accuracy_mean_red;mean(Accuracy(1,find(Accuracy~=0)))];
             Accuracy_tot=[Accuracy_tot;Accuracy];
             Accuracy=[];
             Scaling_factor=[Scaling_factor; SET];
