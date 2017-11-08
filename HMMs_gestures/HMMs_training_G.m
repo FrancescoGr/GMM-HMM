@@ -42,11 +42,11 @@ load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\DATA_SETs');
 %% Emission Probability
 
 % Normalization in order to have the Emission_Prob, as in [6]
-for d=1:length(DATA_SETs)
+for d=1:length(GMMs)
 
     for f=1:length(Gesture{d,1})
         if f ~=7
-            P=Pb{1,f}.*GMMs{d,1}{f,1}.ComponentProportion;
+            P=Pb{d,1}{1,f}.*GMMs{d,1}{f,1}.ComponentProportion;
         %     tot=sum(P);
         %     P=P./tot;
             Emission_P_sequence{d,1}{1,f}=P;
@@ -65,18 +65,18 @@ for d=1:length(DATA_SETs)
     end
 
     % total Sequence of the states and of the gestures
-    Total_sequence=[];
+    Total_sequence{d,1}=[];
     for f=1:length(Gesture{d,1})
         if f ~=7
             lines = States{d,1}{1,f};
             Points =[Gesture{d,1}{1,f},f*ones(size(Gesture{d,1}{1,f},1),1),Emission_P_sequence{d,1}{1,f},State{d,1}{1,f}];
-            if size(Points,1)> 200  % elimina gesture 10, pochi samples
+            if size(Points,1)> 200  % elimina gesture 7,10 pochi samples
                 Total_sequence{d,1}(lines,:)=Points;   
             end
         end
     end
 
-    % Deleting of the empty samples (gesture 10)
+    % Deleting of the empty samples (gesture 7,10)
     [ind]=find(Total_sequence{d,1}(:,1)==0);
     Total_sequence{d,1}(ind,:)=[];
 
