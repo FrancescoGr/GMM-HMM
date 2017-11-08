@@ -1,4 +1,4 @@
-%% HMMs TRAINING PHASE 
+%% COMPOSITE HMM, training phase
 % REFERENCES
 % [1] Simple Methods for Initializing the EM Algorithm for Gaussian Mixture Models
 % [2] The Multivariate Gaussian Distribution (?)
@@ -16,29 +16,24 @@ clear
 close all
 clc
 
+% load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Covariances');
+% load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Gesture');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Mean');
+% load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Pb');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Pp');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Prior');
 % load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\Prob');
-load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Pb');
+% load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\AllFeatures_Builtin\States');
+
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\GMMs');
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Gesture');
+load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Pb');
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\States');
-load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\DATA_SETs');
 
 
-% % 1) Loading
-% Data_withGestures = Loader_Gestures();
-% [r,~]=find(isnan(Data_withGestures));
-% Data_withGestures(r,:)=[];
-% 
-% Data_withGestures(:,3:end-1)=Data_withGestures(:,3:end-1);
-% K=max(Data_withGestures(:,end));
-% 
-% % 2) Features scaling and mean normalization [5] Grouping [6]
-% Data_withGestures = Scaling_Grouping(Data_withGestures);
-% LT=length(Data_withGestures);
+%% Emission Probability
 
+% Normalization in order to have the Emission_Prob, as in [6]
 %% Emission Probability
 
 % Normalization in order to have the Emission_Prob, as in [6]
@@ -80,37 +75,31 @@ for d=1:length(GMMs)
     [ind]=find(Total_sequence{d,1}(:,1)==0);
     Total_sequence{d,1}(ind,:)=[];
 
-    % Data_withGestures(ind,:)=[];
-    % Merging the tola sequence with Data_withGestures
-
     % 2) Features scaling and mean normalization [5] Grouping [6]
-    Total_sequence{d,1} = Scaling_Grouping(Total_sequence{d,1});
-    LT=length(Total_sequence{d,1});
+    test=[1,2,4,5];
+    
+    for c = 1:length(test)
+        comp=test(c);
 
-    %% Subdivide each user and each trial
-    [Data_inusers_rep,LD,K,U,R,T,Gestures]=Subdividing(Total_sequence{d,1});
+        % 2) Features scaling and mean normalization [5] Grouping [6]
+        Total_sequences{d,1} = Scaling_Grouping(Total_sequence{d,1},comp);
+        LT=length(Total_sequences{d,1});
 
-    %% Beginning Probabilty
+        %% Subdivide each user and each trial
+        [Data_inusers_rep,LD,K,U,R,T,Gestures]=Subdividing(Total_sequences{d,1});
 
-    [Beginning_P] = Startprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
+        %% Beginning Probabilty
+        [Beginning_P] = Startprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
 
-     %% Transition Probabilty
+         %% Transition Probabilty
+        [Trans_P] = Transprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
 
-    [Trans_P] = Transprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
+        %% Save
 
-    %% Save
-
-    for f=1:length(Gesture{d,1})
-        if f ~=7
-            HMMs{d,1}(1,f).Beginning_P=Beginning_P{1,f};
-            HMMs{d,1}(1,f).Trans_P=Trans_P{1,f};
-            HMMs{d,1}(1,f).Emission_P=Emission_P_sequence{d,1}{1,f};
-            HMMs{d,1}(1,f).Prior=GMMs{d,1}{f,1}.ComponentProportion;
-            HMMs{d,1}(1,f).Covariances=GMMs{d,1}{f,1}.Sigma;
-            HMMs{d,1}(1,f).Mean=GMMs{d,1}{f,1}.mu;
-        end
+        HMM_tot_generic{d,1}{comp,1}.Beginning_P=Beginning_P;
+        HMM_tot_generic{d,1}{comp,1}.Trans_P=Trans_P;
+        clear Total_sequences;
     end
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-save HMMs HMMs
+save test test
+save HMM_tot_generic HMM_tot_generic
