@@ -37,6 +37,7 @@ function [Features,user] = Loader_Gestures()
                     Features.(u).(t).(s)=[];
                     Session=[];
                     Session=[Session,j*(ones(length(data.(u).(t).(s).PSM1.pos),1))];
+                    Session=[Session,i*(ones(length(data.(u).(t).(s).PSM1.pos),1))];
                     Session=[Session,i_session*(ones(length(data.(u).(t).(s).PSM1.pos),1))];   
                     Session=[Session,data.(u).(t).(s).PSM1.pos];
                     Session=[Session,data.(u).(t).(s).PSM1.rot]; 

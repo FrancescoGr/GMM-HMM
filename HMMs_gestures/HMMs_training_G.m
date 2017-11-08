@@ -42,7 +42,7 @@ load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\DATA_SETs');
 %% Emission Probability
 
 % Normalization in order to have the Emission_Prob, as in [6]
-for d=1:length(GMMs)
+for d=1:2 % length(GMMs)
 
     for f=1:length(Gesture{d,1})
         if f ~=7
@@ -58,7 +58,7 @@ for d=1:length(GMMs)
 
     for f=1:length(Gesture{d,1})
         if f ~=7
-            Pp = posterior(GMMs{d,1}{f,1},Gesture{d,1}{1,f}(:,3:end));
+            Pp = posterior(GMMs{d,1}{f,1},Gesture{d,1}{1,f}(:,4:end));
             [~,ind]=max(Pp');
             State{d,1}{1,f}=ind';
         end
@@ -88,26 +88,26 @@ for d=1:length(GMMs)
     LT=length(Total_sequence{d,1});
 
     %% Subdivide each user and each trial
-    [Data_inusers_rep,LD,K,U,R,Gestures]=Subdividing(Total_sequence{d,1});
+    [Data_inusers_rep,LD,K,U,R,T,Gestures]=Subdividing(Total_sequence{d,1});
 
     %% Beginning Probabilty
 
-    [Beginning_P] = Startprob(Data_inusers_rep,LD,K,U,R,Gestures);
+    [Beginning_P] = Startprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
 
      %% Transition Probabilty
 
-    [Trans_P] = Transprob(Data_inusers_rep,LD,K,U,R,Gestures);
+    [Trans_P] = Transprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
 
     %% Save
 
-    for f=1:length(Gesture)
+    for f=1:length(Gesture{d,1})
         if f ~=7
             HMMs{d,1}(1,f).Beginning_P=Beginning_P{1,f};
             HMMs{d,1}(1,f).Trans_P=Trans_P{1,f};
-            HMMs{d,1}(1,f).Emission_P=Emission_P_sequence{1,f};
-            HMMs{d,1}(1,f).Prior=GMMs{f,1}.ComponentProportion;
-            HMMs{d,1}(1,f).Covariances=GMMs{f,1}.Sigma;
-            HMMs{d,1}(1,f).Mean=GMMs{f,1}.mu;
+            HMMs{d,1}(1,f).Emission_P=Emission_P_sequence{d,1}{1,f};
+            HMMs{d,1}(1,f).Prior=GMMs{d,1}{f,1}.ComponentProportion;
+            HMMs{d,1}(1,f).Covariances=GMMs{d,1}{f,1}.Sigma;
+            HMMs{d,1}(1,f).Mean=GMMs{d,1}{f,1}.mu;
         end
     end
 end

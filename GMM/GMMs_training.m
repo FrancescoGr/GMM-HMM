@@ -16,14 +16,14 @@ clear
 close all
 clc
 
-% 1) Loading
-% [Data_inusersANDtasks,users] = Loader_Gestures();
-% 
-% % 2) Test set and Training Set definition
-% User_out = [1,2,3]; %['D','C','B']; 
-% DATA_SETs = Dataset(User_out,Data_inusersANDtasks,users);
-% save DATA_SETs DATA_SETs
-load('DATA_SETs.mat')
+% % 1) Loading
+[Data_inusersANDtasks,users] = Loader_Gestures();
+
+% 2) Test set and Training Set definition
+User_out = [1,2,3]; %['D','C','B']; 
+DATA_SETs = Dataset(User_out,Data_inusersANDtasks,users);
+save DATA_SETs DATA_SETs
+% load('DATA_SETs.mat')
 
 
 % 3) number of features 
@@ -78,9 +78,9 @@ for d=1:length(DATA_SETs)
     
     %   - 5.2st method: LDA as in [6]
     if dim ~= 38
-        [~, WLDA{d,1}, ~, ~]=mylda(Data_withGestures(:,3:end-1),Data_withGestures(:,end),dim);
-        Data_withGestures_reducted = Data_withGestures(:,3:end-1)*WLDA{d,1};
-        Data_withGestures = [Data_withGestures(:,1:2),Data_withGestures_reducted,Data_withGestures(:,end)];
+        [~, WLDA{d,1}, ~, ~]=mylda(Data_withGestures(:,4:end-1),Data_withGestures(:,end),dim);
+        Data_withGestures_reducted = Data_withGestures(:,4:end-1)*WLDA{d,1};
+        Data_withGestures = [Data_withGestures(:,1:3),Data_withGestures_reducted,Data_withGestures(:,end)];
     end
 
     % 6) Grouping of the data, according to the gestures
@@ -99,9 +99,9 @@ for d=1:length(DATA_SETs)
     %               Mean{1,i} = GMMs.mu;
     %               [Pb{1,i},Pp{1,i}] = Belonging_Prob( Prior{1,i},Covariances{1,i},Mean{1,i},gesture(:,3:end));
                   
-                  [GMMs{d,1}{i,1}]= GMM_modeling_built_new(gesture(:,3:end));
+                  [GMMs{d,1}{i,1}]= GMM_modeling_built_new(gesture(:,4:end));
                   for j=1:size(GMMs{d,1}{i,1}.mu,1)
-                     Pb{d,1}{1,i}(:,j)= mvnpdf(gesture(:,3:end),GMMs{d,1}{i,1}.mu(j,:),GMMs{d,1}{i,1}.Sigma(:,:,j));
+                     Pb{d,1}{1,i}(:,j)= mvnpdf(gesture(:,4:end),GMMs{d,1}{i,1}.mu(j,:),GMMs{d,1}{i,1}.Sigma(:,:,j));
                   end
 
                  % our Function
