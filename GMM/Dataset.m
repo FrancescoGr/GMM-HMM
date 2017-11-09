@@ -4,10 +4,10 @@ for i=1:length(User_out)
     u = ['u',int2str(User_out(i))];
     DATA_SETs{i,1}.test_user=users(i); 
     
-    for T=1:3
+    for T=1:numel(fieldnames(Data_inusers.(u)))
         t = ['t',int2str(T)];
     
-        for j=1:numel(fieldnames(Data_inusers.(u)))
+        for j=1:numel(fieldnames(Data_inusers.(u).(t)))
              s = ['s',int2str(j)];
              DATA_SETs{i,1}.Test.(t).(s) = Data_inusers.(u).(t).(s);
         end
@@ -21,7 +21,7 @@ for i=1:length(User_out)
     
     for y=1:length(train_us)
         u = ['u',int2str(train_us(y))];
-        for T=1:3
+        for T=1:numel(fieldnames(Data_inusers.(u)))
             t = ['t',int2str(T)];
             if isfield(Data_inusers.(u),(t))
                 
