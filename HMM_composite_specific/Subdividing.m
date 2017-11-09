@@ -1,7 +1,7 @@
 function [Data_inusers_rep,LD,K,U,R,T,Gestures]=Subdividing(DatawithStates)
 
 %% Initializations
-Gestures =max(DatawithStates(:,end));
+Gestures = 15; % max(DatawithStates(:,end));
 LD= size(DatawithStates,1);
 K = 3; %Possible states
 U = max(DatawithStates(:,1)); % users B D C
