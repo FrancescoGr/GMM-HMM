@@ -6,7 +6,7 @@ function Data_set=Scaling_Grouping(Data_set,SET)
         s=1;
         if SET ~= 1
           % Finding every repetition of the task (ring) 
-            first = Data_set(:,end-4);
+            first = Data_set(:,end);
             second = [first;first(end,end)];
             second = second (2:end,1);
 
@@ -33,14 +33,13 @@ function Data_set=Scaling_Grouping(Data_set,SET)
             end
 
             clear Data_set
-            Data(:,end)=round(Data(:,end));
-            Data_set = Data(:,3:end-5);
-            Repetition = Data(:,1:2);
+%             Data(:,end)=round(Data(:,end));
+            Data_set = Data(:,4:end);
+            Repetition = Data(:,1:3);
         else
-            
-            Repetition=Data_set(:,1:2);
-            Data = Data_set(:,end-4:end);
-            Data_set = Data_set(:,3:end-5);
+            Repetition=Data_set(:,1:3);
+%             Data = Data_set(:,end-4:end);
+            Data_set = Data_set(:,4:end);
             
         end
         
@@ -70,5 +69,5 @@ function Data_set=Scaling_Grouping(Data_set,SET)
 %         end
 %  
         
-        Data_set=[Repetition,Data_set,Data(:,end-4:end)];
+        Data_set=[Repetition,Data_set];
 end
