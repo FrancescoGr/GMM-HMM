@@ -142,7 +142,7 @@ dim = 38;
                 end               
             end
         end
-   end
+    end
     
 end
 
@@ -150,6 +150,7 @@ end
  save GMMs GMMs
  save Gesture Gesture
  save States States
+ save choice choice
  if dim ~= 38
     save WLDA WLDA
  end

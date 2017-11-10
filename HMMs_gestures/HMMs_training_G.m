@@ -25,6 +25,7 @@ load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\GMMs');
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Gesture');
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\States');
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\DATA_SETs');
+load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\choice');
 
 
 % % 1) Loading
@@ -39,76 +40,155 @@ load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\DATA_SETs');
 % Data_withGestures = Scaling_Grouping(Data_withGestures);
 % LT=length(Data_withGestures);
 
-%% Emission Probability
+if choice == 1
+    %% Emission Probability
 
-% Normalization in order to have the Emission_Prob, as in [6]
-for d=1:length(GMMs)
+    % Normalization in order to have the Emission_Prob, as in [6]
+    for d=1:length(GMMs)
 
-    for f=1:length(Gesture{d,1})
-        if f ~=7
-            P=Pb{d,1}{1,f}.*GMMs{d,1}{f,1}.ComponentProportion;
-        %     tot=sum(P);
-        %     P=P./tot;
-            Emission_P_sequence{d,1}{1,f}=P;
+        for f=1:length(Gesture{d,1})
+            if f ~=7
+                P=Pb{d,1}{1,f}.*GMMs{d,1}{f,1}.ComponentProportion;
+            %     tot=sum(P);
+            %     P=P./tot;
+                Emission_P_sequence{d,1}{1,f}=P;
+            end
+        %     Sum_tot{1,f}(:,:)=tot;
         end
-    %     Sum_tot{1,f}(:,:)=tot;
-    end
 
-%% Sequence reconstruction
+    %% Sequence reconstruction
 
-    for f=1:length(Gesture{d,1})
-        if f ~=7
-            Pp = posterior(GMMs{d,1}{f,1},Gesture{d,1}{1,f}(:,4:end));
-            [~,ind]=max(Pp');
-            State{d,1}{1,f}=ind';
-        end
-    end
-
-    % total Sequence of the states and of the gestures
-    Total_sequence{d,1}=[];
-    for f=1:length(Gesture{d,1})
-        if f ~=7
-            lines = States{d,1}{1,f};
-            Points =[Gesture{d,1}{1,f},f*ones(size(Gesture{d,1}{1,f},1),1),Emission_P_sequence{d,1}{1,f},State{d,1}{1,f}];
-            if size(Points,1)> 200  % elimina gesture 7,10 pochi samples
-                Total_sequence{d,1}(lines,:)=Points;   
+        for f=1:length(Gesture{d,1})
+            if f ~=7
+                Pp = posterior(GMMs{d,1}{f,1},Gesture{d,1}{1,f}(:,4:end));
+                [~,ind]=max(Pp');
+                State{d,1}{1,f}=ind';
             end
         end
-    end
 
-    % Deleting of the empty samples (gesture 7,10)
-    [ind]=find(Total_sequence{d,1}(:,1)==0);
-    Total_sequence{d,1}(ind,:)=[];
-
-    % Data_withGestures(ind,:)=[];
-    % Merging the tola sequence with Data_withGestures
-
-    % 2) Features scaling and mean normalization [5] Grouping [6]
-    Total_sequence{d,1} = Scaling_Grouping(Total_sequence{d,1});
-    LT=length(Total_sequence{d,1});
-
-    %% Subdivide each user and each trial
-    [Data_inusers_rep,LD,K,U,R,T,Gestures]=Subdividing(Total_sequence{d,1});
-
-    %% Beginning Probabilty
-
-    [Beginning_P] = Startprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
-
-     %% Transition Probabilty
-
-    [Trans_P] = Transprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
-
-    %% Save
-
-    for f=1:length(Gesture{d,1})
-        if f ~=7
-            HMMs{d,1}(1,f).Beginning_P=Beginning_P{1,f};
-            HMMs{d,1}(1,f).Trans_P=Trans_P{1,f};
-            HMMs{d,1}(1,f).Emission_P=Emission_P_sequence{d,1}{1,f};
-            HMMs{d,1}(1,f).Prior=GMMs{d,1}{f,1}.ComponentProportion;
-            HMMs{d,1}(1,f).Covariances=GMMs{d,1}{f,1}.Sigma;
-            HMMs{d,1}(1,f).Mean=GMMs{d,1}{f,1}.mu;
+        % total Sequence of the states and of the gestures
+        Total_sequence{d,1}=[];
+        for f=1:length(Gesture{d,1})
+            if f ~=7
+                lines = States{d,1}{1,f};
+                Points =[Gesture{d,1}{1,f},f*ones(size(Gesture{d,1}{1,f},1),1),Emission_P_sequence{d,1}{1,f},State{d,1}{1,f}];
+                if size(Points,1)> 200  % elimina gesture 7,10 pochi samples
+                    Total_sequence{d,1}(lines,:)=Points;   
+                end
+            end
         end
+
+        % Deleting of the empty samples (gesture 7,10)
+        [ind]=find(Total_sequence{d,1}(:,1)==0);
+        Total_sequence{d,1}(ind,:)=[];
+
+        % Data_withGestures(ind,:)=[];
+        % Merging the tola sequence with Data_withGestures
+
+        % 2) Features scaling and mean normalization [5] Grouping [6]
+        Total_sequence{d,1} = Scaling_Grouping(Total_sequence{d,1});
+        LT=length(Total_sequence{d,1});
+
+        %% Subdivide each user and each trial
+        [Data_inusers_rep,LD,K,U,R,T,Gestures]=Subdividing(Total_sequence{d,1});
+
+        %% Beginning Probabilty
+
+        [Beginning_P] = Startprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
+
+         %% Transition Probabilty
+
+        [Trans_P] = Transprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
+
+        %% Save
+
+        for f=1:length(Gesture{d,1})
+            if f ~=7
+                HMMs{d,1}(1,f).Beginning_P=Beginning_P{1,f};
+                HMMs{d,1}(1,f).Trans_P=Trans_P{1,f};
+                HMMs{d,1}(1,f).Emission_P=Emission_P_sequence{d,1}{1,f};
+                HMMs{d,1}(1,f).Prior=GMMs{d,1}{f,1}.ComponentProportion;
+                HMMs{d,1}(1,f).Covariances=GMMs{d,1}{f,1}.Sigma;
+                HMMs{d,1}(1,f).Mean=GMMs{d,1}{f,1}.mu;
+            end
+        end
+    end 
+else
+%% Emission Probability
+    % Normalization in order to have the Emission_Prob, as in [6]
+    load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Gest_task');
+    for d=1:length(GMMs)
+        for T= 1:num_tasks
+           % definition of the gestures in each task
+            if T==1
+               G=[1,11:15];
+            end
+            if T==2
+               G=[1:6,8,11];
+            end
+            if T==3
+               G=[1:6,8:11];
+            end
+            
+            for lab=1:length(G)
+                f=G(1,lab);
+                P=Pb{d,1}{T,1}{1,f}.*GMMs{d,1}{T,1}{1,f}.ComponentProportion;
+                Emission_P_sequence{d,1}{T,1}{1,f}=P;
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                Pp = posterior(GMMs{d,1}{T,1}{1,f},Gest_task{d,1}{T,1}{1,f}(:,4:end));
+                [~,ind]=max(Pp');
+                State{d,1}{T,1}{1,f}=ind';
+                
+            end
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            % total Sequence of the states and of the gestures
+            Total_sequence{d,1}=[];
+            for f=1:length(Gesture{d,1})
+                if f ~=7
+                    lines = States{d,1}{1,f};
+                    Points =[Gesture{d,1}{1,f},f*ones(size(Gesture{d,1}{1,f},1),1),Emission_P_sequence{d,1}{1,f},State{d,1}{1,f}];
+                    if size(Points,1)> 200  % elimina gesture 7,10 pochi samples
+                        Total_sequence{d,1}(lines,:)=Points;   
+                    end
+                end
+            end
+
+            % Deleting of the empty samples (gesture 7,10)
+            [ind]=find(Total_sequence{d,1}(:,1)==0);
+            Total_sequence{d,1}(ind,:)=[];
+
+            % Data_withGestures(ind,:)=[];
+            % Merging the tola sequence with Data_withGestures
+
+            % 2) Features scaling and mean normalization [5] Grouping [6]
+            Total_sequence{d,1} = Scaling_Grouping(Total_sequence{d,1});
+            LT=length(Total_sequence{d,1});
+
+            %% Subdivide each user and each trial
+            [Data_inusers_rep,LD,K,U,R,T,Gestures]=Subdividing(Total_sequence{d,1});
+
+            %% Beginning Probabilty
+
+            [Beginning_P] = Startprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
+
+             %% Transition Probabilty
+
+            [Trans_P] = Transprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
+
+            %% Save
+
+            for f=1:length(Gesture{d,1})
+                if f ~=7
+                    HMMs{d,1}(1,f).Beginning_P=Beginning_P{1,f};
+                    HMMs{d,1}(1,f).Trans_P=Trans_P{1,f};
+                    HMMs{d,1}(1,f).Emission_P=Emission_P_sequence{d,1}{1,f};
+                    HMMs{d,1}(1,f).Prior=GMMs{d,1}{f,1}.ComponentProportion;
+                    HMMs{d,1}(1,f).Covariances=GMMs{d,1}{f,1}.Sigma;
+                    HMMs{d,1}(1,f).Mean=GMMs{d,1}{f,1}.mu;
+                end
+            end
+        end 
     end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
