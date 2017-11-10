@@ -1,10 +1,14 @@
-function [obj]= GMM_modeling_built_new(Training_set)
+function [obj]= GMM_modeling_built_new(Training_set,choice)
 
 %%  Initialization
 
 % 1) Number of Gaussians in the model
+if choice==1
+    it = 1700;
+else
+    it = 15000;
+end
 K = 3;
-it = 1700;
 Reg = 0;
 
         SharedCovariance = {false};
