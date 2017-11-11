@@ -131,8 +131,8 @@ dim = 38;
             end
             for lab=1:length(G)
                 f=G(1,lab);
-                [Gest_task_ind] = find(Gesture{d,1}{1,f}(:,2)== T);
-                Gest_task{d,1}{T,1}{1,f} = Gesture{d,1}{1,f}(Gest_task_ind,:);
+                [Gest_task_ind{d,1}{T,1}{1,f}] = find(Gesture{d,1}{1,f}(:,2)== T);
+                Gest_task{d,1}{T,1}{1,f} = Gesture{d,1}{1,f}(Gest_task_ind{d,1}{T,1}{1,f},:);
                 % 7) Definition of States that characterize each Gesture 
                 %    -> each GMM represent a state in the HMM that characterizes the Gesture
                 gesture=Gest_task{d,1}{T,1}{1,f};
@@ -143,7 +143,8 @@ dim = 38;
             end
         end
     end
-    
+    save Gest_task Gest_task
+    save Gest_task_ind Gest_task_ind
 end
 
  save Pb Pb

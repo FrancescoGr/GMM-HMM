@@ -1,11 +1,11 @@
 function [Data_inusers_rep,LD,K,U,R,T,Gestures]=Subdividing(DatawithStates)
 
 %% Initializations
-Gestures =max(DatawithStates(:,end-4));
+Gestures =15;
 LD= size(DatawithStates,1);
 K = max(DatawithStates(:,end)); %Possible states
 U = max(DatawithStates(:,1)); % users B D C
-R = max(DatawithStates(:,3)); % possible repetitions
+R = max(DatawithStates(:,3)); % possible sessions
 T = max(DatawithStates(:,2)); % possible tasks
 
 start =1;
@@ -45,16 +45,5 @@ for u= 1:U
         k=1;
     end
 end
-% 
-% % 3) subdivide each repetition: Data_inusers_rep(u,r)-> r= repetitions, u =users
-% for u= 1:U
-%     if User(u,1)~=0
-%         for r= 1:R
-%             [positions]=find(Data_inusers{u,1}(:,3)==r);
-%             Data_inusers_rep{u,r} = Data_inusers{u,1}(positions,:);
-%         end
-%     end
-% end
-
 
 end
