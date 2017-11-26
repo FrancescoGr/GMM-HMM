@@ -15,6 +15,8 @@
 clear 
 close all
 clc
+  parpool;
+
 
 % % % 1) Loading
 % [Data_inusersANDtasks,users] = Loader_Gestures();
@@ -32,7 +34,7 @@ choice=2;
 
 % 4) number of features & number of diff. tasks
 num_tasks=3;
-dim = 38;
+dim = 9;
 
     for d=1:length(DATA_SETs)
         Data_withGestures = DATA_SETs{d,1}.Training;
@@ -130,21 +132,27 @@ dim = 38;
                G=[1:6,8:11];
             end
             for lab=1:length(G)
-                f=G(1,lab);
+                f=G(1,lab); 
                 [Gest_task_ind{d,1}{T,1}{1,f}] = find(Gesture{d,1}{1,f}(:,2)== T);
                 Gest_task{d,1}{T,1}{1,f} = Gesture{d,1}{1,f}(Gest_task_ind{d,1}{T,1}{1,f},:);
                 % 7) Definition of States that characterize each Gesture 
                 %    -> each GMM represent a state in the HMM that characterizes the Gesture
                 gesture=Gest_task{d,1}{T,1}{1,f};
-                [GMMs{d,1}{T,1}{f,1}]= GMM_modeling_built_new(gesture(:,4:end),choice);
-                for j=1:size(GMMs{d,1}{T,1}{f,1}.mu,1)
-                    Pb{d,1}{T,1}{1,f}(:,j)= mvnpdf(gesture(:,4:end),GMMs{d,1}{T,1}{f,1}.mu(j,:),GMMs{d,1}{T,1}{f,1}.Sigma(:,:,j));
-                end               
+%                 tic
+%                 [GMMs{d,1}{T,1}{f,1}]= GMM_modeling_built_new(gesture(:,4:end),choice);
+%                 for j=1:size(GMMs{d,1}{T,1}{f,1}.mu,1)
+%                     Pb{d,1}{T,1}{1,f}(:,j)= mvnpdf(gesture(:,4:end),GMMs{d,1}{T,1}{f,1}.mu(j,:),GMMs{d,1}{T,1}{f,1}.Sigma(:,:,j));
+%                 end
+%                 toc
+%                 save Pb Pb
+%                 save GMMs GMMs
+%                 save Gest_task Gest_task
+%                 save Gest_task_ind Gest_task_ind
             end
+     
         end
     end
-    save Gest_task Gest_task
-    save Gest_task_ind Gest_task_ind
+
 end
 
  save Pb Pb
@@ -155,6 +163,8 @@ end
  if dim ~= 38
     save WLDA WLDA
  end
+ delete(gcp)
+
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  % CHECK Prior analysis

@@ -20,7 +20,7 @@ clc
 % 1) Test loading
 % [DATA,F,task,user] = Loader_Gestures();
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\DATA_SETs.mat');
-F = 38;
+F = 9;
 task = 3;
 
 % 2) Loading of the models
@@ -159,8 +159,8 @@ else
 
                                 if F ~=38
                                     load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\WLDA');
-                                    DATA_reducted.(u).(t).(s) = DATA.(t).(s)(:,3:end-1)*WLDA;
-                                    DATA_fin.(u).(t).(s) = [DATA.(t).(s)(:,1:2),DATA_reducted.(u).(t).(s),DATA.(t).(s)(:,end)];
+                                    DATA_reducted.(u).(t).(s) = DATA.(t).(s)(:,4:end-1)*WLDA{d,1};
+                                    DATA_fin.(u).(t).(s) = [DATA.(t).(s)(:,1:3),DATA_reducted.(u).(t).(s),DATA.(t).(s)(:,end)];
                                 else
                                     DATA_fin.(u).(t).(s) = DATA.(t).(s); 
                                 end
@@ -168,7 +168,11 @@ else
                                 % 3) Features scaling and mean normalization [5] Grouping [6]
                                 [New_samples{comp,1}{SET,1}.(u).(t).(s)] = Scaling_Grouping(DATA_fin.(u).(t).(s),SET);
                                 LT{comp,1}{SET,1}.(u).(t).(s)=size(New_samples{comp,1}{SET,1}.(u).(t).(s),1);
-                                Gesture=size(HMMs{d,1},2);
+                                
+                               % ############################################################
+
+                                
+                                Gesture=size(HMMs{d,1}{T,1},2);
                                 K=3; %num of gaussians in each gesture
 
                                 % 4) CLASSIFICATION
@@ -184,7 +188,7 @@ else
                                 %     [V,Prob]=Viterbi_Composite2(HMM,HMMs,Data,i,Gesture,K,V,Prob); % no MultiFactor  
                                 %     [V,Prob,MultiFactor]=Viterbi_Composite3(HMM,HMMs,Data,MultiFactor,i,Gesture,K,V,Prob);  % log % normalizzando Pb 
                                 %     [V,Prob,MultiFactor]=Viterbi_Composite4(HMM,HMMs,Data,MultiFactor,i,Gesture,K,V,Prob,Sum_tot1); % normalizzando Pb
-                                    [V,Prob]=Viterbi_Composite5(HMM,HMMs{d,1},Data,i,Gesture,K,V,Prob); % no MultiFactor  %log
+                                    [V,Prob]=Viterbi_Composite5(HMM,HMMs{d,1}{T,1},Data,i,Gesture,K,V,Prob); % no MultiFactor  %log
 
                                     DECODED_SEQUENCE{comp,1}{SET,1}.(u).(t).(s)(i,1)=V;
 

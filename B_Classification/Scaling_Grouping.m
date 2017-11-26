@@ -34,12 +34,12 @@ function Data_set=Scaling_Grouping(Data_set,SET)
             end
 
             clear Data_set
-            Data_set = Data(:,3:end-1);
-            Repetition = Data(:,1:2);
+            Data_set = Data(:,4:end-1);
+            Repetition = Data(:,1:3);
         else
-            Repetition=Data_set(:,1:2);
+            Repetition=Data_set(:,1:3);
             Data = Data_set(:,end);
-            Data_set = Data_set(:,3:end-1);
+            Data_set = Data_set(:,4:end-1);
             
         end
         

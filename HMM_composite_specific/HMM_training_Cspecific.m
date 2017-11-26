@@ -27,6 +27,7 @@ clc
 
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\GMMs');
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Gesture');
+load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Gest_task');
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\Pb');
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\States');
 load('C:\Users\Francesco-Greg\Desktop\GMM+HMM\GMM\DATA_SETs');

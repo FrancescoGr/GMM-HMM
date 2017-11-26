@@ -2,7 +2,7 @@ function    [V_new,Prob_new]=Viterbi_Composite5(HMM,HMMs,Data,i,Gesture,K,V_old,
 
 if i==1    
     for j=1:Gesture
-        if j ~= 7
+        if 0 ~= length(HMMs(1,j).Covariances)
             clear Pb;
             Training_set = Data;
             Covariances = HMMs(1,j).Covariances;
@@ -18,7 +18,7 @@ if i==1
     [Prob_new,V_new]=max(log(v));
 else
      for j=1:Gesture
-        if j ~= 7 
+        if 0 ~= length(HMMs(1,j).Covariances)
             clear Pb;
             Training_set = Data;
             Covariances = HMMs(1,j).Covariances;
@@ -46,7 +46,7 @@ else
     end
     v(V_new,:)=0;
   
-    if V_new==11 && Prob_new*0.9995 <= max(v)
+    if V_new==11 && Prob_new*0.9998 <= max(v)
         [Prob_new,V_new]=max(v);
     end
     

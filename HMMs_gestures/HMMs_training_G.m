@@ -136,15 +136,15 @@ else
             
             for lab=1:length(G)
                 f=G(1,lab);
-                P=Pb{d,1}{T,1}{1,f}.*GMMs{d,1}{T,1}{1,f}.ComponentProportion;
+                P=Pb{d,1}{T,1}{1,f}.*GMMs{d,1}{T,1}{f,1}.ComponentProportion;
                 Emission_P_sequence{d,1}{T,1}{1,f}=P;
-                Pp = posterior(GMMs{d,1}{T,1}{1,f},Gest_task{d,1}{T,1}{1,f}(:,4:end));
+                Pp = posterior(GMMs{d,1}{T,1}{f,1},Gest_task{d,1}{T,1}{1,f}(:,4:end));
                 [~,ind]=max(Pp');
                 State{d,1}{T,1}{1,f}=ind';
                             
                 % total Sequence of the states and of the gestures
                 
-                lines = Gest_task_ind{d,1}{T,1}{1,f};
+                lines = States{d,1}{1,f}(Gest_task_ind{d,1}{T,1}{1,f},1);
                 Points =[Gest_task{d,1}{T,1}{1,f},f*ones(size(Gest_task{d,1}{T,1}{1,f},1),1),Emission_P_sequence{d,1}{T,1}{1,f},State{d,1}{T,1}{1,f}];
                 if size(Points,1)> 200  % elimina gesture 7,10 pochi samples
                     Total_sequence{d,1}{T,1}(lines,:)=Points;   
@@ -176,14 +176,26 @@ else
             [Trans_P] = Transprob(Data_inusers_rep,LD,K,U,R,T,Gestures);
 
             %% Save
-            for lab=1:length(G)
-                f=G(1,lab);
-                HMMs{d,1}{T,1}(1,f).Beginning_P =Beginning_P{1,f};
-                HMMs{d,1}{T,1}(1,f).Trans_P=Trans_P{1,f};
-                HMMs{d,1}{T,1}(1,f).Emission_P=Emission_P_sequence{d,1}{T,1}{1,f};
-                HMMs{d,1}{T,1}(1,f).Prior=GMMs{d,1}{T,1}{f,1}.ComponentProportion;
-                HMMs{d,1}{T,1}(1,f).Covariances=GMMs{d,1}{T,1}{f,1}.Sigma;
-                HMMs{d,1}{T,1}(1,f).Mean=GMMs{d,1}{T,1}{f,1}.mu;
+            for count=1:Gestures %length(G)
+                if length(find(G==count))~=0
+                    
+                    HMMs{d,1}{T,1}(1,count).Beginning_P =Beginning_P{1,count};
+                    HMMs{d,1}{T,1}(1,count).Trans_P=Trans_P{1,count};
+                    HMMs{d,1}{T,1}(1,count).Emission_P=Emission_P_sequence{d,1}{T,1}{1,count};                
+                    HMMs{d,1}{T,1}(1,count).Prior = GMMs{d,1}{T,1}{count,1}.ComponentProportion;
+                    HMMs{d,1}{T,1}(1,count).Covariances=GMMs{d,1}{T,1}{count,1}.Sigma;
+                    HMMs{d,1}{T,1}(1,count).Mean=GMMs{d,1}{T,1}{count,1}.mu;
+
+                else
+                    HMMs{d,1}{T,1}(1,count).Beginning_P =[];
+                    HMMs{d,1}{T,1}(1,count).Trans_P=[];
+                    HMMs{d,1}{T,1}(1,count).Emission_P=[];
+                    HMMs{d,1}{T,1}(1,count).Prior=[];
+                    HMMs{d,1}{T,1}(1,count).Covariances=[];
+                    HMMs{d,1}{T,1}(1,count).Mean=[];
+
+                end
+                    
             end
 
         end 
